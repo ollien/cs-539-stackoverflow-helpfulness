@@ -1,0 +1,4 @@
+venv
+*.sw?
+.DS_Store
+.vscode
