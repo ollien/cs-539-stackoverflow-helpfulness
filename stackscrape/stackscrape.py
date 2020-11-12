@@ -5,9 +5,11 @@ import ratelimit
 from typing import Optional
 import time
 import datetime
+import os
 
-CONFIG_FILE_PATH = "config.json"
-MAX_REQUESTS_PER_SECOND = 25
+CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+# limit is actually 30/s, but SO seems to lock me out with anything over two
+MAX_REQUESTS_PER_SECOND = 2
 
 
 class Client:
@@ -56,7 +58,9 @@ class Client:
             {
                 "id": item["question_id"],
                 "tags": item["tags"],
-                "reputation": item["owner"]["reputation"],
+                "reputation": item["owner"]["reputation"]
+                if item["owner"]["user_type"] != "does_not_exist"
+                else None,
                 "views": item["view_count"],
             }
             for item in info["items"]
