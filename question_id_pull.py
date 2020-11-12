@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 import numpy as np
 import click
@@ -14,6 +15,7 @@ def fetch_post_data(
     tags = []
     asker_reputation = []
     views = []
+    creation_dates = []
     for chunk in chunks:
         i += 1
         if i % 100 == 0:
@@ -42,8 +44,28 @@ def fetch_post_data(
             [question["views"] if question else None for question in sorted_questions]
         )
 
+        user_info = client.get_user_info(
+            [
+                question["asker_id"]
+                for question in sorted_questions
+                if question and question["asker_id"]
+            ]
+        )
+        consolidated_user_info = consolidate_list_of_dicts(user_info, "id")
+        creation_dates.extend(
+            [
+                format_unix_timestamp(
+                    consolidated_user_info[question["asker_id"]]["creation_date"]
+                )
+                if question and question["asker_id"]
+                else None
+                for question in sorted_questions
+            ]
+        )
+
     dataframe["asker_reputation"] = asker_reputation
     dataframe["views"] = views
+    dataframe["asker_creation_date"] = creation_dates
 
     return dataframe
 
@@ -55,6 +77,11 @@ def consolidate_list_of_dicts(dicts, id_key):
         res[key] = d
 
     return res
+
+
+def format_unix_timestamp(timestamp):
+    timestamp_datetime = datetime.datetime.fromtimestamp(timestamp)
+    return timestamp_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
 
 @click.command()

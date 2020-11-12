@@ -58,9 +58,16 @@ class Client:
             {
                 "id": item["question_id"],
                 "tags": item["tags"],
-                "reputation": item["owner"]["reputation"]
-                if item["owner"]["user_type"] != "does_not_exist"
-                else None,
+                "reputation": (
+                    item["owner"]["reputation"]
+                    if item["owner"]["user_type"] != "does_not_exist"
+                    else None
+                ),
+                "asker_id": (
+                    item["owner"]["user_id"]
+                    if item["owner"]["user_type"] != "does_not_exist"
+                    else None
+                ),
                 "views": item["view_count"],
             }
             for item in info["items"]
@@ -133,7 +140,7 @@ def main():
     client.authenticate()
     print(client.get_question_info([10434599, 64734674]))
     print(client.get_tag_info(["python", "go"]))
-    print(client.get_user_info([1103734]))
+    print(client.get_user_info([1103734, 1103735]))
 
 
 if __name__ == "__main__":
