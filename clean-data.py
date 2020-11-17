@@ -24,6 +24,7 @@ def remove_tags(text):
 
 #read csv files
 df = pd.read_csv('train.csv')
+df['Body'] = df['Body'].astype(str)
   
 #get instances where number of <code> and </code> tags are the same
 df['<code>'] = df['Body'].apply(lambda x: x.count('<code>'))
@@ -42,6 +43,7 @@ df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: remove_tags(x))
 df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.replace('\r', ' ').replace('\n', ' '))
 
 #remove punctuation
-df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.translate(str.maketrans('', '', string.punctuation)))
+punc = string.punctuation.replace("'", "")
+df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.translate(str.maketrans('', '', punc)))
 
 df2.to_csv('train-cleaned.csv') 
