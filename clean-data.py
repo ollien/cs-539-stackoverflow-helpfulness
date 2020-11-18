@@ -43,7 +43,11 @@ df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: remove_tags(x))
 df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.replace('\r', ' ').replace('\n', ' '))
 
 #remove punctuation
-punc = string.punctuation.replace("'", "").replace(".", "")
+punc = string.punctuation.replace("'", "")
+#punc = punc.replace(".", "")
 df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.translate(str.maketrans('', '', punc)))
+
+#convert to lowercase
+df2['BodyCleaned'] = df2['BodyCleaned'].apply(lambda x: x.lower())
 
 df2.to_csv('train-cleaned.csv') 
