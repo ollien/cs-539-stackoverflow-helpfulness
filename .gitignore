@@ -2,3 +2,5 @@ venv
 *.sw?
 .DS_Store
 .vscode
+.ipynb_checkpoints
+.csv

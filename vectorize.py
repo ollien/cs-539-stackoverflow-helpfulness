@@ -6,6 +6,7 @@ Created on Wed Nov 18 18:10:34 2020
 """
 
 import pandas as pd
+import pickle
 from gensim.models import Word2Vec
 from gensim.models import keyedvectors
 
@@ -31,6 +32,6 @@ df.drop('len', axis=1, inplace=True)
 
 #vectorize
 df['BodyVectorized'] = df['BodyCleaned'].apply(lambda x: model[x])
-
+pickle.dump(df['BodyVectorized'].tolist(), 'bodyVectorized.pkl')
 #save new csv
 df.to_csv('train-vectorized.csv')
