@@ -19,7 +19,7 @@ def vectorize_data(data):
     vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words=stop_words)
     counts = vectorizer.fit_transform(data)
     transformer = sklearn.feature_extraction.text.TfidfTransformer().fit(counts)
-    return transformer.transform(counts)
+    return vectorizer, transformer, transformer.transform(counts)
 
 def nltk_download():
     try:
@@ -33,14 +33,17 @@ def nltk_download():
 def main(train_file: str, test_file: str):
     nltk_download()
     training_data = get_file_data(train_file)
-    test_data = get_file_data(train_file)
-    res = vectorize_data(training_data["BodyCleaned"])
-    model = AdaBoostClassifier(n_estimators=5000, random_state=0)
+    test_data = get_file_data(test_file)
+    vectorizer, transformer, res = vectorize_data(training_data["BodyCleaned"])
+    # Maybe try other base_estimators?
+    #m = sklearn.naive_bayes.MultinomialNB()
+    #model = AdaBoostClassifier(base_estimator=m,n_estimators=1000, random_state=0)
+    model = AdaBoostClassifier(n_estimators=1000, random_state=0)
     model.fit(res, training_data["Y"])
-    vectorized_test_data = vectorize_data(training_data["BodyCleaned"])
+    n_trees = len(model)
+    vectorized_test_data = transformer.transform(vectorizer.transform(test_data["BodyCleaned"]))
     predicted = model.predict(vectorized_test_data)
-    print(sklearn.metrics.accuracy_score(training_data["Y"], predicted))
-
+    print(sklearn.metrics.accuracy_score(test_data["Y"], predicted))
 
 if __name__ == "__main__":
     main()
