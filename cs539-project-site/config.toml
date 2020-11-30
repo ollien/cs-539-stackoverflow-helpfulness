@@ -1,0 +1,22 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "Evaluating StackOverflow Question Quality"
+theme = "vanilla-bootstrap-hugo-theme"
+
+[[menu.nav]]
+name = "Home"
+pre = "home"
+url = "/"
+weight = 1
+
+[[menu.nav]]
+name = "Overview"
+pre = "info"
+url = "/overview/"
+weight = 2
+
+[[menu.nav]]
+name = "Github"
+pre = "github"
+url = "/github/"
+weight = 3
