@@ -10,6 +10,7 @@ def main(nn_file_path: str, other_classifier_file: str):
     for i in range(max(nn_file["num"]) + 1):
         res = nn_file.loc[nn_file["num"] == i]
         if len(res) == 0:
+            # If something wasn't trained by the neural net due to batch size constraints, it may have to be dropped as data in the ensemble
             sklearn_file = sklearn_file.drop(sklearn_file[sklearn_file.num == i].index)
             print("Dropping", i)
             continue

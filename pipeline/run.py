@@ -1,5 +1,6 @@
 import os
 import glob
+import re
 import click
 from numpy.core.numeric import cross
 import split_cv
@@ -11,6 +12,18 @@ import stackit
 CROSSVAL_DIRNAME = "crossval"
 NEURALNET_PREFIX = "nn"
 OUTPUT_DIR = "output"
+
+
+def get_crossval_files(crossval_dir: str):
+    files = glob.glob(os.path.join(crossval_dir, "*.csv"))
+    train_files = [
+        basename
+        for file in files
+        if (basename := os.path.basename(file)).startswith("train_")
+    ]
+    for train_file in train_files:
+        test_file = re.sub(r"^train_", "test_", train_file)
+        yield (train_file, test_file)
 
 
 @click.command()
@@ -33,28 +46,33 @@ def main(data_file: str, n_splits: int, storage_dir: str):
 
     out_dir = os.path.join(storage_dir, OUTPUT_DIR)
     os.makedirs(out_dir)
-    #  TODO: Do proper cross_val
-    print("Training neural network...")
-    torch_embedding.main(
-        os.path.join(nn_dir, "train_0.csv"),
-        os.path.join(nn_dir, "test_0.csv"),
-        os.path.join(out_dir, "nn_out.csv"),
-    )
+    accuracies = []
+    for i, (train_file, test_file) in enumerate(get_crossval_files(crossval_dir)):
+        print(f"Running Crossval Iteration #{i}")
+        print("Training neural network...")
+        torch_embedding.main(
+            os.path.join(nn_dir, train_file),
+            os.path.join(nn_dir, test_file),
+            os.path.join(out_dir, "nn_out.csv"),
+        )
 
-    print("Training other classifiers...")
-    other_classifiers.main(
-        os.path.join(crossval_dir, "train_0.csv"),
-        os.path.join(crossval_dir, "test_0.csv"),
-        os.path.join(out_dir, "other_out.csv"),
-    )
+        print("Training other classifiers...")
+        other_classifiers.main(
+            os.path.join(crossval_dir, train_file),
+            os.path.join(crossval_dir, test_file),
+            os.path.join(out_dir, "other_out.csv"),
+        )
 
-    print("Training ensemble...")
-    accuracy = stackit.main(
-        os.path.join(out_dir, "nn_out.csv"),
-        os.path.join(out_dir, "other_out.csv"),
-    )
+        print("Training ensemble...")
+        accuracy = stackit.main(
+            os.path.join(out_dir, "nn_out.csv"),
+            os.path.join(out_dir, "other_out.csv"),
+        )
 
-    print(accuracy)
+        print(accuracy)
+        accuracies.append(accuracy)
+
+    print("Best accuracy: ", max(accuracies))
 
 
 if __name__ == "__main__":
