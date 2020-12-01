@@ -1,4 +1,5 @@
 import os
+import sys
 import glob
 import re
 import click
@@ -26,11 +27,24 @@ def get_crossval_files(crossval_dir: str):
         yield (train_file, test_file)
 
 
+def is_dir_available(path: str):
+    return not os.path.exists(path) or (
+        os.path.isdir(path) and len(os.listdir(path)) == 0
+    )
+
+
 @click.command()
 @click.option("--data_file", required=True)
 @click.option("--n-splits", required=True, type=click.INT)
 @click.option("--storage_dir", default="./processed_data")
 def main(data_file: str, n_splits: int, storage_dir: str):
+    if not is_dir_available(storage_dir):
+        print(
+            "Storage directory must be empty in order to be used. Please either delete it or its contents.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     print("Producing cross validation splits...")
     crossval_dir = os.path.join(storage_dir, "crossval")
     split_cv.run(n_splits, data_file, crossval_dir)
