@@ -62,6 +62,18 @@ def set_train_test():
 	return X, y
  
 # Define machine learning models
+
+ 
+# get a list of models to evaluate
+def call_models():
+	models = dict()
+	models['lr'] = LogisticRegression()
+	models['knn'] = KNeighborsClassifier()
+	models['cart'] = DecisionTreeClassifier()
+	models['svc'] = SVC()
+	models['stacking'] = stacking_ensemble()
+	return models
+
 # Define stacking classifier
 def stacking_ensemble():
 	# define the base models
@@ -75,16 +87,6 @@ def stacking_ensemble():
 	# define the stacking ensemble
 	stacking_model = StackingClassifier(estimators=base, final_estimator=meta_learner, cv=4)
 	return stacking_model
- 
-# get a list of models to evaluate
-def call_models():
-	models = dict()
-	models['lr'] = LogisticRegression()
-	models['knn'] = KNeighborsClassifier()
-	models['cart'] = DecisionTreeClassifier()
-	models['svc'] = SVC()
-	models['stacking'] = stacking_ensemble()
-	return models
  
 # evaluate a give model using cross-validation
 def train_model(model, X, y):
@@ -103,6 +105,3 @@ for name, model in models.items():
 	results.append(scores)
 	model_names.append(name)
 	print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
-# plot model performance for comparison
-pyplot.boxplot(results, labels=model_names, showmeans=True)
-pyplot.show()
