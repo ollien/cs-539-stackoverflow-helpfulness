@@ -8,6 +8,7 @@ Original file is located at
 """
 
 # compare ensemble to each baseline classifier
+from os import get_terminal_size
 from numpy import mean
 from numpy import std
 from sklearn.datasets import make_classification
@@ -20,88 +21,109 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import StackingClassifier
 from matplotlib import pyplot
-#from google.colab import files
-#import io
+import collections
+import csv
+
+# from google.colab import files
+# import io
 import pandas as pd
 
+TRAIN_FILE = "3_fold/train_0.csv"
+TEST_FILE = "3_fold/test_0.csv"
+OUT_FILE = "stack_out.csv"
+CLASS_MAP = {"HQ": 0, "LQ_CLOSE": 1, "LQ_EDIT": 2}
 
- 
+
 # Upload the dataset
 # Clean columns for null values
 # Select training variables
 # Select labels
 
-def set_train_test():
 
-	''' Colab Version
-	uploaded = files.upload()
-	train_file = pd.read_csv(io.BytesIO(uploaded['train.csv']))'''
+def get_data(filename):
 
-	data = pd.read_csv("/Users/miranda/PycharmProjects/pythonProject8/all_data.csv")
-	data = data[data.asker_reputation != 0]
-	data = data[data.views !=0]
+    """Colab Version
+    uploaded = files.upload()
+    train_file = pd.read_csv(io.BytesIO(uploaded['train.csv']))"""
 
-	data["asker_creation_date"].fillna(0, inplace = True)
+    data = pd.read_csv(filename)
+    data = data[data.asker_reputation != 0]
+    data = data[data.views != 0]
 
-	data["asker_reputation"].fillna(0, inplace = True)
-	
-	data["views"].fillna(0, inplace = True)
- 
-	data["Text-Code Ratio"].fillna(0, inplace = True)
- 
-	data["Text"].fillna(0, inplace = True)
- 
-	data["Code"].fillna(0, inplace = True)
-	data["Asker_Question_Year"].fillna(0, inplace = True)
+    data["asker_creation_date"].fillna(0, inplace=True)
+
+    data["asker_reputation"].fillna(0, inplace=True)
+
+    data["views"].fillna(0, inplace=True)
+
+    data["Text-Code Ratio"].fillna(0, inplace=True)
+
+    data["Text"].fillna(0, inplace=True)
+
+    data["Code"].fillna(0, inplace=True)
+    data["Asker_Question_Year"].fillna(0, inplace=True)
+
+    X = data.loc[
+        :,
+        [
+            "asker_reputation",
+            "views",
+            "Text-Code Ratio",
+            "Text",
+            "Code",
+            "Asker_Question_Year",
+        ],
+    ].values
+
+    y = data.loc[:, ["Y"]].values
+
+    return X, y
 
 
-	X = data.loc[:,["asker_reputation", "views", "Text-Code Ratio", "Text", "Code", "Asker_Question_Year"]].values
-
-	y = data.loc[:,["Y"]].values
-
-	return X, y
- 
 # Define machine learning models
 
- 
-# get a list of models to evaluate
-def call_models():
-	models = dict()
-	models['lr'] = LogisticRegression()
-	models['knn'] = KNeighborsClassifier()
-	models['cart'] = DecisionTreeClassifier()
-	models['svc'] = SVC()
-	models['stacking'] = stacking_ensemble()
-	return models
 
-# Define stacking classifier
-def stacking_ensemble():
-	# define the base models
-	base = list()
-	base.append(('lr', LogisticRegression()))
-	base.append(('knn', KNeighborsClassifier()))
-	base.append(('cart', DecisionTreeClassifier()))
-	base.append(('svc', SVC()))
-	# define meta learner model
-	meta_learner = LogisticRegression()
-	# define the stacking ensemble
-	stacking_model = StackingClassifier(estimators=base, final_estimator=meta_learner, cv=4)
-	return stacking_model
- 
+# get a list of models to evaluate
+def get_models():
+    models = dict()
+    models["lr"] = LogisticRegression()
+    models["knn"] = KNeighborsClassifier()
+    models["cart"] = DecisionTreeClassifier()
+    models["svc"] = SVC()
+    return models
+
+
 # evaluate a give model using cross-validation
 def train_model(model, X, y):
-	split = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
-	train_scores = cross_val_score(model, X, y, scoring='accuracy', cv = split , n_jobs=-1, error_score='raise')
-	return train_scores
- 
+    split = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+    train_scores = cross_val_score(
+        model, X, y, scoring="accuracy", cv=split, n_jobs=-1, error_score="raise"
+    )
+    return train_scores
+
+
 # define dataset
-X, y = set_train_test()
+X, y = get_data(TRAIN_FILE)
+testX, testY = get_data(TEST_FILE)
 # get the models to evaluate
-models = call_models()
+models = get_models()
 # evaluate the models and store results
 results, model_names = list(), list()
 for name, model in models.items():
-	scores = train_model(model, X, y)
-	results.append(scores)
-	model_names.append(name)
-	print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
+    print(f"Training {name}")
+    model.fit(X, y)
+
+predictions = collections.defaultdict(list)
+predictions["Y"] = list(testY.squeeze())
+for name, model in models.items():
+    predictions[name] = model.predict(testX)
+
+with open(OUT_FILE, "w") as out_file:
+    keys = list(predictions.keys())
+    writer = csv.writer(out_file)
+    writer.writerow(["num"] + keys)
+    for i in range(len(testY)):
+        # I am so sorry to whoever reads this
+        to_write = [CLASS_MAP[predictions[key][i]] for key in keys]
+        to_write = [i] + to_write
+        writer.writerow(to_write)

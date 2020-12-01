@@ -2,10 +2,13 @@ import pandas
 from torch.nn.functional import one_hot
 import torchtext
 import torch, torch.nn, torch.nn.functional, torch.utils.data, torch.optim
+import csv
 
 # NOTE: In order to usee this, the train file must have been changed to use NUMERICAL classes - just using the stock classes won't work
 # If you've loaded the csv in with pandas, you can do  df['Y'] = df['Y'].map({'HQ': 0, "LQ_CLOSE": 1, "LQ_EDIT": 2})
-TRAIN_FILE = "../train-trunc.csv"
+TRAIN_FILE = "3_fold/nn_train_0.csv"
+TEST_FILE = "3_fold/nn_test_0.csv"
+OUT_FILE = "out.csv"
 NUM_CLASSES = 3
 HIDDEN_SIZE = 32
 BATCH_SIZE = 5
@@ -50,18 +53,21 @@ def get_file_data(filename: str):
 def main():
     body_field = torchtext.data.Field(sequential=True, lower=True)
     label_field = torchtext.data.Field(sequential=False, use_vocab=False)
-    dataset = torchtext.data.TabularDataset(
-        path=TRAIN_FILE,
+    num_field = torchtext.data.Field(sequential=False, use_vocab=False)
+    train_set, test_set = torchtext.data.TabularDataset.splits(
+        path="./",
+        train=TRAIN_FILE,
+        test=TEST_FILE,
         format="csv",
-        fields=[("BodyCleaned", body_field), ("Y", label_field)],
+        fields=[("num", num_field), ("BodyCleaned", body_field), ("Y", label_field)],
         skip_header=True,
     )
-    body_field.build_vocab(dataset, vectors="fasttext.en.300d", min_freq=20)
+    body_field.build_vocab(train_set, vectors="fasttext.en.300d", min_freq=20)
     label_field.build_vocab()
+    num_field.build_vocab()
     net = Classifier(body_field, NUM_CLASSES).cuda()
     optimizer = torch.optim.Adam(net.parameters(), lr=LEARNING_RATE)
     loss_function = torch.nn.CrossEntropyLoss()
-    train_set, test_set = dataset.split(0.7)
     for _ in range(NUM_EPOCHS):
         for i, item in enumerate(
             torchtext.data.Iterator(train_set, batch_size=BATCH_SIZE)
@@ -82,6 +88,7 @@ def main():
 
     print("Testing...")
     num_correct = 0
+    predictions = {}
     for item in torchtext.data.Iterator(test_set, batch_size=BATCH_SIZE):
         data, target = item.BodyCleaned.cuda(), item.Y.cuda()
         # Throw anything away less than the batch size
@@ -92,10 +99,20 @@ def main():
             hidden = net.get_initial_hidden()
             model_out, _ = net(data.T, hidden)
             prediction = model_out.argmax(dim=1, keepdim=True)
+            for i, sample_num in enumerate(item.num):
+                predictions[sample_num.item()] = (
+                    prediction[i].item(),
+                    item.Y[i].item(),
+                )
             correct = prediction.eq(target.view_as(prediction)).sum().item()
             num_correct += correct
 
     print("Accuracy: ", num_correct / len(test_set))
+    with open(OUT_FILE, "w") as out_file:
+        writer = csv.writer(out_file)
+        writer.writerow(["num", "predicted", "Y"])
+        for num, (predicted, Y) in sorted(predictions.items(), key=lambda x: x[0]):
+            writer.writerow([num, predicted, Y])
 
 
 if __name__ == "__main__":
