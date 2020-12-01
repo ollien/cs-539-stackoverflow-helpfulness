@@ -17,18 +17,16 @@ def main(nn_file_path: str, other_classifier_file: str):
         sklearn_file.loc[sklearn_file.num == i, "nn"] = prediction
 
     print("Training...")
-    trainX, testX, trainY, testY = sklearn.model_selection.train_test_split(
+    logistic = sklearn.linear_model.LogisticRegression()
+    crossval_scores = sklearn.model_selection.cross_validate(
+        logistic,
         sklearn_file[["lr", "cart", "svc", "knn", "nn"]],
         sklearn_file["Y"],
-        test_size=0.33,
+        cv=10,
+        scoring="accuracy",
     )
 
-    logistic = sklearn.linear_model.LogisticRegression()
-    logistic.fit(trainX, trainY)
-    print("Testing...")
-    predictions = logistic.predict(testX)
-
-    return sklearn.metrics.accuracy_score(testY, predictions)
+    return max(crossval_scores["test_score"])
 
 
 if __name__ == "__main__":
