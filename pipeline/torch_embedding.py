@@ -6,9 +6,9 @@ import csv
 
 # NOTE: In order to usee this, the train file must have been changed to use NUMERICAL classes - just using the stock classes won't work
 # If you've loaded the csv in with pandas, you can do  df['Y'] = df['Y'].map({'HQ': 0, "LQ_CLOSE": 1, "LQ_EDIT": 2})
-TRAIN_FILE = "3_fold/nn_train_0.csv"
-TEST_FILE = "3_fold/nn_test_0.csv"
-OUT_FILE = "out.csv"
+DEFAULT_TRAIN_FILE = "3_fold/nn_train_0.csv"
+DEFAULT_TEST_FILE = "3_fold/nn_test_0.csv"
+DEFAULT_OUT_FILE = "out.csv"
 NUM_CLASSES = 3
 HIDDEN_SIZE = 32
 BATCH_SIZE = 5
@@ -50,14 +50,14 @@ def get_file_data(filename: str):
     return all_data[["BodyCleaned", "Y"]][:50]
 
 
-def main():
+def main(train_file: str, test_file: str, out_file: str):
     body_field = torchtext.data.Field(sequential=True, lower=True)
     label_field = torchtext.data.Field(sequential=False, use_vocab=False)
     num_field = torchtext.data.Field(sequential=False, use_vocab=False)
     train_set, test_set = torchtext.data.TabularDataset.splits(
         path="./",
-        train=TRAIN_FILE,
-        test=TEST_FILE,
+        train=train_file,
+        test=test_file,
         format="csv",
         fields=[("num", num_field), ("BodyCleaned", body_field), ("Y", label_field)],
         skip_header=True,
@@ -108,7 +108,7 @@ def main():
             num_correct += correct
 
     print("Accuracy: ", num_correct / len(test_set))
-    with open(OUT_FILE, "w") as out_file:
+    with open(out_file, "w") as out_file:
         writer = csv.writer(out_file)
         writer.writerow(["num", "predicted", "Y"])
         for num, (predicted, Y) in sorted(predictions.items(), key=lambda x: x[0]):
@@ -116,4 +116,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(DEFAULT_TRAIN_FILE, DEFAULT_TEST_FILE, DEFAULT_OUT_FILE)

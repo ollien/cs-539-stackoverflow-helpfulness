@@ -13,15 +13,7 @@ def make_dir(dir: str):
         if e.errno != errno.EEXIST:
             raise
 
-
-@click.command()
-@click.argument("in_file")
-@click.argument("out_dir")
-@click.option("--n-splits", type=click.INT, required=True)
-def main(n_splits: int, in_file: str, out_dir: str):
-    """
-    Convert a single CSV file into several k-fold split files in out_dir
-    """
+def run(n_splits: int, in_file: str, out_dir: str):
     make_dir(out_dir)
     data = pandas.read_csv(in_file)
     kfold = sklearn.model_selection.KFold(n_splits)
@@ -38,6 +30,16 @@ def main(n_splits: int, in_file: str, out_dir: str):
                 writer.writerow(["num"] + list(data.columns))
                 for i, item in enumerate(subset):
                     writer.writerow([i] + list(data.iloc[item]))
+
+@click.command()
+@click.argument("in_file")
+@click.argument("out_dir")
+@click.option("--n-splits", type=click.INT, required=True)
+def main(n_splits: int, in_file: str, out_dir: str):
+    """
+    Convert a single CSV file into several k-fold split files in out_dir
+    """
+    run(n_splits, in_file, out_dir)
 
 
 if __name__ == "__main__":
