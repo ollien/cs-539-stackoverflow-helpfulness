@@ -20,84 +20,89 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import StackingClassifier
 from matplotlib import pyplot
-from google.colab import files
-import io
+#from google.colab import files
+#import io
 import pandas as pd
 
 
  
-# get the dataset
-def get_dataset():
+# Upload the dataset
+# Clean columns for null values
+# Select training variables
+# Select labels
+
+def set_train_test():
 
 	''' Colab Version
 	uploaded = files.upload()
 	train_file = pd.read_csv(io.BytesIO(uploaded['train.csv']))'''
 
-	train_file = pd.read_csv("/Users/miranda/PycharmProjects/pythonProject8/train.csv")
-	train_file = train_file[train_file.asker_reputation != 0]
-	train_file = train_file[train_file.views !=0]
+	data = pd.read_csv("/Users/miranda/PycharmProjects/pythonProject8/all_data.csv")
+	data = data[data.asker_reputation != 0]
+	data = data[data.views !=0]
 
-	train_file["asker_reputation"].fillna(0, inplace = True)
+	data["asker_creation_date"].fillna(0, inplace = True)
+
+	data["asker_reputation"].fillna(0, inplace = True)
 	
-	train_file["views"].fillna(0, inplace = True)
+	data["views"].fillna(0, inplace = True)
  
-	train_file["Text-Code Ratio"].fillna(0, inplace = True)
+	data["Text-Code Ratio"].fillna(0, inplace = True)
  
-	train_file["Text"].fillna(0, inplace = True)
+	data["Text"].fillna(0, inplace = True)
  
-	train_file["Code"].fillna(0, inplace = True)
+	data["Code"].fillna(0, inplace = True)
+	data["Asker_Question_Year"].fillna(0, inplace = True)
 
-	
 
-	X = train_file.loc[:,["asker_reputation", "views", "Text-Code Ratio", "Text", "Code"]].values
+	X = data.loc[:,["asker_reputation", "views", "Text-Code Ratio", "Text", "Code", "Asker_Question_Year"]].values
 
-	y = train_file.loc[:,["Y"]].values
+	y = data.loc[:,["Y"]].values
 
 	return X, y
  
-# get a stacking ensemble of models
-def get_stacking():
+# Define machine learning models
+# Define stacking classifier
+def stacking_ensemble():
 	# define the base models
-	level0 = list()
-	level0.append(('lr', LogisticRegression()))
-	level0.append(('knn', KNeighborsClassifier()))
-	level0.append(('cart', DecisionTreeClassifier()))
-	level0.append(('bayes', GaussianNB()))
-	level0.append(('svc', SVC()))
+	base = list()
+	base.append(('lr', LogisticRegression()))
+	base.append(('knn', KNeighborsClassifier()))
+	base.append(('cart', DecisionTreeClassifier()))
+	base.append(('svc', SVC()))
 	# define meta learner model
-	level1 = LogisticRegression()
+	meta_learner = LogisticRegression()
 	# define the stacking ensemble
-	model = StackingClassifier(estimators=level0, final_estimator=level1, cv=5)
-	return model
+	stacking_model = StackingClassifier(estimators=base, final_estimator=meta_learner, cv=4)
+	return stacking_model
  
 # get a list of models to evaluate
-def get_models():
+def call_models():
 	models = dict()
 	models['lr'] = LogisticRegression()
 	models['knn'] = KNeighborsClassifier()
 	models['cart'] = DecisionTreeClassifier()
-	models['bayes'] = GaussianNB()
 	models['svc'] = SVC()
-	models['stacking'] = get_stacking()
+	models['stacking'] = stacking_ensemble()
 	return models
  
 # evaluate a give model using cross-validation
-def evaluate_model(model, X, y):
-	cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
-	scores = cross_val_score(model, X, y, scoring='accuracy', cv=cv, n_jobs=-1, error_score='raise')
-	return scores
+def train_model(model, X, y):
+	split = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+	train_scores = cross_val_score(model, X, y, scoring='accuracy', cv = split , n_jobs=-1, error_score='raise')
+	return train_scores
  
 # define dataset
-X, y = get_dataset()
+X, y = set_train_test()
 # get the models to evaluate
-models = get_models()
+models = call_models()
 # evaluate the models and store results
-results, names = list(), list()
+results, model_names = list(), list()
 for name, model in models.items():
-	scores = evaluate_model(model, X, y)
+	scores = train_model(model, X, y)
 	results.append(scores)
-	names.append(name)
+	model_names.append(name)
 	print('>%s %.3f (%.3f)' % (name, mean(scores), std(scores)))
 # plot model performance for comparison
-pyplot.boxplot(results, labels=names, showmeans=True)
+pyplot.boxplot(results, labels=model_names, showmeans=True)
 pyplot.show()
