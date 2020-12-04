@@ -25,3 +25,5 @@ To run the model, simply do
 $ python3 run.py --n-splits 5 --data_file path/to/alldata.csv
 ```
 This will perform a five-fold cross validation, run all the components of the model, and then output a final accuracy value.
+
+If you wish to re-run the model, you must delete the `processed_data` directory before continuing, or specify `--storage_dir` with another directory to use for data storage.
