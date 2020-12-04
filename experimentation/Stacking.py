@@ -133,3 +133,8 @@ def main(train_file: str, test_file: str, out_file: str):
     print("svc: ", svc_Pos/len(testY))
 if __name__ == "__main__":
     main(DEFAULT_TRAIN_FILE, DEFAULT_TEST_FILE, DEFAULT_OUT_FILE)
+    
+    '''Lr:  0.8047406320842779
+Knn:  0.8046239498599813
+cart:  0.8043239098546473
+svc:  0.7670022669689291'''
