@@ -14,4 +14,4 @@ Miranda Reisch
 
 ***
 
-![Example image](/wpi.png)
+![WPI Logo](wpi.png)
