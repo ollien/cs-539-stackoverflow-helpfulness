@@ -20,3 +20,9 @@ name = "Github"
 pre = "github"
 url = "/github/"
 weight = 3
+
+[[menu.nav]]
+name = "Approaches"
+pre = "approaches"
+url = "/approaches/"
+weight = 4
