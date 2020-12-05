@@ -1,0 +1,209 @@
+<!doctype html>
+
+<html lang="en" class="h-100">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="stylesheet" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/css/bootstrap.min.css">
+  
+  
+  <title>Style a markdown table with Bootstrap classes in Hugo | Evaluating StackOverflow Question Quality</title>
+  <style>
+.container {
+  max-width: 700px;
+}
+#nav a {
+  font-weight: bold;
+  color: inherit;
+}
+#nav a.nav-link-active {
+  background-color: #212529;
+  color: #fff;
+}
+#nav-border {
+  border-bottom: 1px solid #212529;
+}
+#main {
+  margin-top: 1em;
+  margin-bottom: 4em;
+}
+#home-jumbotron {
+  background-color: inherit;
+}
+#footer .container {
+  padding: 1em 0;
+}
+#footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+.font-125 {
+  font-size: 125%;
+}
+.tag-btn {
+  margin-bottom: 0.3em;
+}
+pre {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+}
+pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit; 
+  background-color: transparent;
+  border-radius: 0;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+img,
+iframe,
+embed,
+video,
+audio {
+  max-width: 100%;
+}
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: initial;
+}
+</style>
+</head>
+  <body class="d-flex flex-column h-100">
+    <div id="nav-border" class="container">
+  <nav id="nav" class="nav justify-content-center">
+  
+  
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/"><i data-feather="home"></i> Home</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/overview/"><i data-feather="info"></i> Overview</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/github/"><i data-feather="github"></i> Github</a>
+  
+  </nav>
+</div>
+
+    <div class="container">
+      <main id="main">
+        
+
+<h1>Style a markdown table with Bootstrap classes in Hugo</h1>
+
+
+<i data-feather="calendar"></i> <time datetime="2018-12-12">Dec 12, 2018</time>
+
+  <br>
+  <i data-feather="tag"></i>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/css">css</a>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/bootstrap">bootstrap</a>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/hugo">hugo</a>
+  
+
+<br><br>
+<p>Inspired by <a href="https://discourse.gohugo.io/t/how-to-customise-tables/15661/">this discussion</a>, I wanted the ability to style a markdown table with <a href="https://getbootstrap.com/docs/4.1/content/tables/">Bootstrap table classes</a>. In the past, I&rsquo;ve accomplished this by <a href="https://zwbetz.com/create-an-html-table-from-a-toml-data-file-in-hugo/">defining the table in a data file</a>, then building it with a shortcode.</p>
+<p>While this works fine, it&rsquo;s better for a different use case. I wanted something that meets the following criteria:</p>
+<ul>
+<li>The table is defined in markdown</li>
+<li>It lives in the content file, e.g. <code>content/post/some-post.md</code></li>
+<li>It&rsquo;s styled with Bootstrap table classes</li>
+</ul>
+<p>After a bit of tinkering, here&rsquo;s the shortcode I came up with. To use it, pass the markdown table between the shortcode, then pass the Bootstrap table classes as an argument.</p>
+<h2 id="usage">Usage</h2>
+<pre><code>{{&lt; bootstrap-table &quot;table table-dark table-striped table-bordered&quot; &gt;}}
+| Animal  | Sounds |
+|---------|--------|
+| Cat     | Meow   |
+| Dog     | Woof   |
+| Cricket | Chirp  |
+{{&lt; /bootstrap-table &gt;}}
+</code></pre><h2 id="definition">Definition</h2>
+<pre><code>{{ $htmlTable := .Inner | markdownify }}
+{{ $class := .Get 0 }}
+{{ $old := &quot;&lt;table&gt;&quot; }}
+{{ $new := printf &quot;&lt;table class=\&quot;%s\&quot;&gt;&quot; $class }}
+{{ $htmlTable := replace $htmlTable $old $new }}
+{{ $htmlTable | safeHTML }}
+</code></pre><h2 id="output">Output</h2>
+
+
+
+
+
+<table class="table table-dark table-striped table-bordered">
+<thead>
+<tr>
+<th>Animal</th>
+<th>Sounds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cat</td>
+<td>Meow</td>
+</tr>
+<tr>
+<td>Dog</td>
+<td>Woof</td>
+</tr>
+<tr>
+<td>Cricket</td>
+<td>Chirp</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+      </main>
+    </div>
+    
+<footer id="footer" class="mt-auto text-center text-muted">
+  <div class="container">
+    
+  </div>
+</footer>
+
+    <script src="https://ollien.github.io/cs-539-stackoverflow-helpfulness/js/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+
+
+    
+
+
+
+    
+  
+
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+
+<html lang="en" class="h-100">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="stylesheet" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/css/bootstrap.min.css">
+  
+  
+  <title>Script to add a page-level variable to content front matter in hugo | Evaluating StackOverflow Question Quality</title>
+  <style>
+.container {
+  max-width: 700px;
+}
+#nav a {
+  font-weight: bold;
+  color: inherit;
+}
+#nav a.nav-link-active {
+  background-color: #212529;
+  color: #fff;
+}
+#nav-border {
+  border-bottom: 1px solid #212529;
+}
+#main {
+  margin-top: 1em;
+  margin-bottom: 4em;
+}
+#home-jumbotron {
+  background-color: inherit;
+}
+#footer .container {
+  padding: 1em 0;
+}
+#footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+.font-125 {
+  font-size: 125%;
+}
+.tag-btn {
+  margin-bottom: 0.3em;
+}
+pre {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+}
+pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit; 
+  background-color: transparent;
+  border-radius: 0;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+img,
+iframe,
+embed,
+video,
+audio {
+  max-width: 100%;
+}
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: initial;
+}
+</style>
+</head>
+  <body class="d-flex flex-column h-100">
+    <div id="nav-border" class="container">
+  <nav id="nav" class="nav justify-content-center">
+  
+  
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/"><i data-feather="home"></i> Home</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/overview/"><i data-feather="info"></i> Overview</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/github/"><i data-feather="github"></i> Github</a>
+  
+  </nav>
+</div>
+
+    <div class="container">
+      <main id="main">
+        
+
+<h1>Script to add a page-level variable to content front matter in hugo</h1>
+
+
+<i data-feather="calendar"></i> <time datetime="2018-10-10">Oct 10, 2018</time>
+
+  <br>
+  <i data-feather="tag"></i>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/hugo">hugo</a>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/command-line">command-line</a>
+  
+  
+  <a class="btn btn-sm btn-outline-dark tag-btn" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/tags/awk">awk</a>
+  
+
+<br><br>
+<p>This was originally a question posed on the <a href="https://discourse.gohugo.io/t/set-frontmatter-params-in-list-template/14645">hugo discussion forums</a>.</p>
+<p>The user wanted to loop through all her content files and add a <code>weight</code> page-level variable to the front matter. The value of <code>weight</code> needed to be the first 2 characters of the content filename, since her content was named like <code>01_content.md</code>, <code>02_content.md</code>, etc.</p>
+<p>She then wanted to <code>range</code> through her pages by their weight, like so:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">{{ <span style="color:#66d9ef">range</span> .<span style="color:#a6e22e">Pages</span>.<span style="color:#a6e22e">ByWeight</span> }}
+&lt;!<span style="color:#f92672">--</span> <span style="color:#a6e22e">some</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">--</span>&gt;
+{{ <span style="color:#a6e22e">end</span> }}
+</code></pre></div><h2 id="the-script">The script</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">for</span> file in *.md; <span style="color:#66d9ef">do</span>
+    weight<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>file:0:2<span style="color:#e6db74">}</span>
+    awk -v weight<span style="color:#f92672">=</span>$weight <span style="color:#e6db74">&#39;/---/{
+</span><span style="color:#e6db74">        count++
+</span><span style="color:#e6db74">        if(count == 2){
+</span><span style="color:#e6db74">        sub(&#34;---&#34;,&#34;weight: &#34; weight &#34;\n---&#34;,$0)
+</span><span style="color:#e6db74">        }
+</span><span style="color:#e6db74">    }
+</span><span style="color:#e6db74">    {print}&#39;</span> $file &gt; tmp <span style="color:#f92672">&amp;&amp;</span> mv tmp $file
+<span style="color:#66d9ef">done</span>
+</code></pre></div><h2 id="explained">Explained</h2>
+<p>Loop through all files in the directory with extension <code>.md</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">for</span> file in *.md; <span style="color:#66d9ef">do</span>
+    <span style="color:#75715e"># ...</span>
+<span style="color:#66d9ef">done</span>
+</code></pre></div><p>Set a variable using the first 2 characters of the filename:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">weight<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>file:0:2<span style="color:#e6db74">}</span>
+</code></pre></div><p>Call an <code>awk</code> program and pass it a <code>weight</code> variable:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">awk -v weight<span style="color:#f92672">=</span>$weight
+</code></pre></div><p>When the <code>awk</code> program encounters the 2nd occurrence of <code>---</code> (which is how you end front matter in YAML), it inserts the <code>weight</code> page-level variable on the line above:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#e6db74">&#39;/---/{
+</span><span style="color:#e6db74">    count++
+</span><span style="color:#e6db74">    if(count == 2){
+</span><span style="color:#e6db74">    sub(&#34;---&#34;,&#34;weight: &#34; weight &#34;\n---&#34;,$0)
+</span><span style="color:#e6db74">    }
+</span><span style="color:#e6db74">}
+</span><span style="color:#e6db74">{print}&#39;</span>
+</code></pre></div><p>Redirect the output of the <code>awk</code> program to a tmp file, then overwrite the original content file with the tmp file:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">&gt; tmp <span style="color:#f92672">&amp;&amp;</span> mv tmp $file
+</code></pre></div><h2 id="result">Result</h2>
+<p>Original <code>01_content.md</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">---
+<span style="color:#66d9ef">title</span>: <span style="color:#e6db74">&#34;Some title&#34;</span>
+<span style="color:#66d9ef">draft</span>: <span style="color:#66d9ef">false</span>
+---
+</code></pre></div><p>Updated <code>01_content.md</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">---
+<span style="color:#66d9ef">title</span>: <span style="color:#e6db74">&#34;Some title&#34;</span>
+<span style="color:#66d9ef">draft</span>: <span style="color:#66d9ef">false</span>
+<span style="color:#66d9ef">weight</span>: <span style="color:#ae81ff">01</span>
+---
+</code></pre></div>
+
+
+      </main>
+    </div>
+    
+<footer id="footer" class="mt-auto text-center text-muted">
+  <div class="container">
+    
+  </div>
+</footer>
+
+    <script src="https://ollien.github.io/cs-539-stackoverflow-helpfulness/js/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+
+
+    
+
+
+
+    
+  
+
+  </body>
+</html>
