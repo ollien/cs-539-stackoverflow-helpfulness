@@ -65,12 +65,12 @@ improve the accuracy of our models by small percentages.
 
 |                     | High Quality | Bad Quality - Edit | Bad Quality - Close |
 |---------------------|--------------|--------------------|---------------------|
-| Asker Reputation    | 7861.961467  | 467.608334         | 968.175715          |
-| Views               | 19934.38875  | 430.836691         | 428.01733           |
-| Text-Code Ratio     | 0.704905     | 1.131195           | 0.700925            |
-| Text                | 307.5174     | 1033.516707        | 247.7481            |
-| Code                | 755.33965    | 5.452931           | 504.6062            |
-| Asker Question Year | 3.51195      | 1.046168           | 1.5011              |
+| Asker Reputation    | 7861.96  | 467.61         | 968.18          |
+| Views               | 19934.39  | 430.84         | 428.02           |
+| Text-Code Ratio     | 0.70     | 1.13           | 0.70            |
+| Text                | 307.52     | 1033.52        | 247.75            |
+| Code                | 755.34    | 5.45           | 504.61            |
+| Asker Question Year | 3.51      | 1.04           | 1.50              |
 
 ***
 
