@@ -1,0 +1,262 @@
+<!doctype html>
+
+<html lang="en" class="h-100">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="stylesheet" href="https://ollien.github.io/cs-539-stackoverflow-helpfulness/css/bootstrap.min.css">
+  
+  
+  <title>Methods and Results | Evaluating StackOverflow Question Quality</title>
+  <style>
+.container {
+  max-width: 700px;
+}
+#nav a {
+  font-weight: bold;
+  color: inherit;
+}
+#nav a.nav-link-active {
+  background-color: #212529;
+  color: #fff;
+}
+#nav-border {
+  border-bottom: 1px solid #212529;
+}
+#main {
+  margin-top: 1em;
+  margin-bottom: 4em;
+}
+#home-jumbotron {
+  background-color: inherit;
+}
+#footer .container {
+  padding: 1em 0;
+}
+#footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+.font-125 {
+  font-size: 125%;
+}
+.tag-btn {
+  margin-bottom: 0.3em;
+}
+pre {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+}
+pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit; 
+  background-color: transparent;
+  border-radius: 0;
+}
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+img,
+iframe,
+embed,
+video,
+audio {
+  max-width: 100%;
+}
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  width: initial;
+}
+</style>
+</head>
+  <body class="d-flex flex-column h-100">
+    <div id="nav-border" class="container">
+  <nav id="nav" class="nav justify-content-center">
+  
+  
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/"><i data-feather="home"></i> Home</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/overview/"><i data-feather="info"></i> Overview</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/approaches/"><i data-feather="trending-up"></i> Methods and Results</a>
+  
+    
+      
+    
+    
+    <a class="nav-link " href="/cs-539-stackoverflow-helpfulness/github/"><i data-feather="github"></i> Github</a>
+  
+  </nav>
+</div>
+
+    <div class="container">
+      <main id="main">
+        
+
+<h1>Methods and Results</h1>
+<hr>
+<h2 id="data-preparation-">Data Preparation</h2>
+<hr>
+<h5 id="data-scraping-">Data Scraping</h5>
+<p>The initial dataset from Kaggle had the Question Id, title of the question, body of the question, tags, date the question was created, and the quality
+classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata,
+such as asker reputation, number of views and the date the asker made their account on Stack Overflow. After cleaning the question body, we created some
+other metadata, such as Text-Code Ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account
+on Stack Overflow when they asked the question.</p>
+<hr>
+<h5 id="post-body-cleaning-">Post Body Cleaning</h5>
+<p>Prior to vectorizing the bodies of the posts, the text was cleaned. HTML tags and code were removed. In addition, line breaks and punctuation were removed,
+and all the text was converted to lowercase so that the same word with different cases would not be interpreted to be a different word
+(for example, “Python” versus “python”).</p>
+<hr>
+<h2 id="main-approaches-">Main Approaches</h2>
+<hr>
+<h5 id="naive-bayes-">Naive Bayes</h5>
+<p>We used TF-IDF for word embedding on each post&rsquo;s body, which was used as input for a scikit Naive Bayes model.
+This model was used as a baseline for comparison to the more advanced approaches implemented later, and was not as accurate as the other approaches.</p>
+<p>Accuracy: ~72.2%</p>
+<hr>
+<h5 id="metadata-classifiers-">Metadata Classifiers</h5>
+<p>While the original dataset had some additional information beyond the post body, in order to obtain more
+useful features, the team performed some web scraping to get additional data for each of the posts.
+These metadata classifiers each used the scraped features for the dataset, (asker reputation, questions views, etc.), and were trained independently.</p>
+<p>The following scikit models were tested:</p>
+<ul>
+<li>LogisticRegression, Accuracy: ~80.5%</li>
+<li>KNeighborsClassifier, Accuracy: ~80.5%</li>
+<li>DecisionTreeClassifier, Accuracy: ~80.4%</li>
+<li>SVC, Accuracy: ~76.7%</li>
+</ul>
+<p>What makes a good question?</p>
+<p>With the models we ran, the most useful metadata was numerical values we collected or calculated – particularly asker reputation, number of views,
+text-code ratio, number of text characters, number of code characters, and the number of years the asker had their account on Stack Overflow. While each of
+these pieces of metadata contributed to improving the accuracy of the models, the two that showed the most significant trend are number of views and number of
+years the asker had their account, followed by a less significant but still relevant asker reputation. The data below shows the averages of the metadata for each
+quality classification. The number of views shows a significant difference between a high quality question and either bad quality classification. In addition,
+even between edit and close, close has a slightly lower average number of views. Asker reputation and Asker question year show some trends, but with less
+linearity. What we can see is that the high quality questions were made by askers that had very high reputation on Stack Overflow and had their account for
+longer. We can see from the data below that the calculations of Text-Code Ratio has less obvious trends and relationships to quality, though they did help
+improve the accuracy of our models by small percentages.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>High Quality</th>
+<th>Bad Quality - Edit</th>
+<th>Bad Quality - Close</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Asker Reputation</td>
+<td>7861.961467</td>
+<td>467.608334</td>
+<td>968.175715</td>
+</tr>
+<tr>
+<td>Views</td>
+<td>19934.38875</td>
+<td>430.836691</td>
+<td>428.01733</td>
+</tr>
+<tr>
+<td>Text-Code Ratio</td>
+<td>0.704905</td>
+<td>1.131195</td>
+<td>0.700925</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>307.5174</td>
+<td>1033.516707</td>
+<td>247.7481</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>755.33965</td>
+<td>5.452931</td>
+<td>504.6062</td>
+</tr>
+<tr>
+<td>Asker Question Year</td>
+<td>3.51195</td>
+<td>1.046168</td>
+<td>1.5011</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h5 id="recurrent-neural-network-rnn-">Recurrent Neural Network (RNN)</h5>
+<p>This was our originally proposed approach, since recurrent neural networks are generally good at text classification since they can handle context for each post. Word vectorization on each post&rsquo;s body was performed using a premade <a href="https://fasttext.cc/">FastText</a> model.
+The vectorized posts were fed into a GRU, (gated recurrent unit), followed by a fully connected layer, for classification.
+The neural network itself was implemented using torch.</p>
+<p>Accuracy: ~76%</p>
+<hr>
+<h5 id="stacking-ensemble-">Stacking Ensemble</h5>
+<p>For this approach, we trained all of the above models for Naive Bayes, RNN, and the metadata classifiers in same manner as before.
+The results of all of these classifiers were combined as input to a stacking layer to use for its own classification, (treating the results of each of the previous models as a feature for each post).
+The stacking layer originally used logistic regression, but using an SVC, (Support Vector Classifier) instead was found to give higher accuracy.</p>
+<p>Accuracy: ~89% with a SVC stacking layer, ~86% with a Logistic Regression stacking layer.</p>
+<hr>
+<h2 id="low-performing-approaches-">Low-Performing Approaches</h2>
+<hr>
+<h5 id="concatenating-metadata-features-with-gru-results-">Concatenating metadata features with GRU results</h5>
+<p>One of the attempted approaches that had low performance was one where the result from the GRU layer were concatenated with the metadata features and
+sent through multiple fully connected layers. We tried tuning the hyperparameters and changing the number of layers in the model but were not able
+to improve the accuracy significantly. If we had more time, we could have created more features from metadata to try to improve the performance of this approach.</p>
+<p>Accuracy: ~45%</p>
+<hr>
+<h5 id="custom-word2vec-architecture-">Custom Word2Vec architecture</h5>
+<p>A Word2vec model was trained using the text from the bodies of the posts. The word embeddings from this model were used to train a recurrent neural network. We
+suspect that this model had low performance because there was a relatively small set of data used to build the Word2vec dictionary. We could improve this by either
+training the model with more posts or using a pre-trained dictionary that contains more words.</p>
+<p>Accuracy: ~35%</p>
+
+
+
+      </main>
+    </div>
+    
+<footer id="footer" class="mt-auto text-center text-muted">
+  <div class="container">
+    
+  </div>
+</footer>
+
+    <script src="https://ollien.github.io/cs-539-stackoverflow-helpfulness/js/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+
+
+    
+
+
+
+    
+  
+
+  </body>
+</html>

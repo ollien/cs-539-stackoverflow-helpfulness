@@ -125,30 +125,21 @@ Follow the following steps:
     </item>
     
     <item>
-      <title></title>
-      <link>https://ollien.github.io/cs-539-stackoverflow-helpfulness/methods/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ollien.github.io/cs-539-stackoverflow-helpfulness/methods/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://ollien.github.io/cs-539-stackoverflow-helpfulness/results/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ollien.github.io/cs-539-stackoverflow-helpfulness/results/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Github</title>
       <link>https://ollien.github.io/cs-539-stackoverflow-helpfulness/github/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://ollien.github.io/cs-539-stackoverflow-helpfulness/github/</guid>
-      <description>Add link here.</description>
+      <description>https://github.com/ollien/cs-539-stackoverflow-helpfulness</description>
+    </item>
+    
+    <item>
+      <title>Methods and Results</title>
+      <link>https://ollien.github.io/cs-539-stackoverflow-helpfulness/approaches/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ollien.github.io/cs-539-stackoverflow-helpfulness/approaches/</guid>
+      <description>Data Preparation  Data Scraping The initial dataset from Kaggle had the Question Id, title of the question, body of the question, tags, date the question was created, and the quality classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata, such as asker reputation, number of views and the date the asker made their account on Stack Overflow.</description>
     </item>
     
     <item>
