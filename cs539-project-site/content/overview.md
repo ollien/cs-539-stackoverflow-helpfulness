@@ -29,7 +29,8 @@ with a quality, which can be one of the following:
 2. LQ_EDIT: Low-quality posts with a negative score and with multiple community edits. However, they still remain open after the edits.
 3. LQ_CLOSE: Low-quality posts that were closed by the community without a single edit.
 
-In addition, since the data set contains the ID of the question, it is possible to go back and scrape more data from the question if necessary.
+The labels in this data set are balanced. In addition, since the data set contains the ID of the question, it is possible to go back and scrape 
+more data from the question if necessary.
 
 ***
 

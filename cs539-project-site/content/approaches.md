@@ -1,6 +1,32 @@
 ---
-title: "Approaches Used"
+title: "Methods and Results"
 ---
+
+***
+
+## Data Preparation ##
+
+***
+
+##### Data Scraping #####
+
+The initial dataset from Kaggle had the Question Id, title of the question, body of the question, tags, date the question was created, and the quality 
+classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata, 
+such as asker reputation, number of views and the date the asker made their account on Stack Overflow. After cleaning the question body, we created some
+other metadata, such as Text-Code Ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account 
+on Stack Overflow when they asked the question. 
+
+***
+
+##### Post Body Cleaning #####
+
+Prior to vectorizing the bodies of the posts, the text was cleaned. HTML tags and code were removed. In addition, line breaks and punctuation were removed, 
+and all the text was converted to lowercase so that the same word with different cases would not be interpreted to be a different word 
+(for example, “Python” versus “python”).
+
+****
+
+## Main Approaches ##
 
 ***
 
@@ -25,9 +51,30 @@ The following scikit models were tested:
 - DecisionTreeClassifier, Accuracy: ~80.4%
 - SVC, Accuracy: ~76.7%
 
+What makes a good question? 
+	
+With the models we ran, the most useful metadata was numerical values we collected or calculated – particularly asker reputation, number of views, 
+text-code ratio, number of text characters, number of code characters, and the number of years the asker had their account on Stack Overflow. While each of 
+these pieces of metadata contributed to improving the accuracy of the models, the two that showed the most significant trend are number of views and number of 
+years the asker had their account, followed by a less significant but still relevant asker reputation. The data below shows the averages of the metadata for each
+quality classification. The number of views shows a significant difference between a high quality question and either bad quality classification. In addition, 
+even between edit and close, close has a slightly lower average number of views. Asker reputation and Asker question year show some trends, but with less 
+linearity. What we can see is that the high quality questions were made by askers that had very high reputation on Stack Overflow and had their account for 
+longer. We can see from the data below that the calculations of Text-Code Ratio has less obvious trends and relationships to quality, though they did help 
+improve the accuracy of our models by small percentages.
+
+|                     | High Quality | Bad Quality - Edit | Bad Quality - Close |
+|---------------------|--------------|--------------------|---------------------|
+| Asker Reputation    | 7861.961467  | 467.608334         | 968.175715          |
+| Views               | 19934.38875  | 430.836691         | 428.01733           |
+| Text-Code Ratio     | 0.704905     | 1.131195           | 0.700925            |
+| Text                | 307.5174     | 1033.516707        | 247.7481            |
+| Code                | 755.33965    | 5.452931           | 504.6062            |
+| Asker Question Year | 3.51195      | 1.046168           | 1.5011              |
+
 ***
 
-##### RNN - Recurrent Neural Network #####
+##### Recurrent Neural Network (RNN) #####
 
 This was our originally proposed approach, since recurrent neural networks are generally good at text classification since they can handle context for each post. Word vectorization on each post's body was performed using a premade [FastText](https://fasttext.cc/) model.
 The vectorized posts were fed into a GRU, (gated recurrent unit), followed by a fully connected layer, for classification.
@@ -44,3 +91,27 @@ The results of all of these classifiers were combined as input to a stacking lay
 The stacking layer originally used logistic regression, but using an SVC, (Support Vector Classifier) instead was found to give higher accuracy.
 
 Accuracy: ~89% with a SVC stacking layer, ~86% with a Logistic Regression stacking layer.
+
+***
+
+## Low-Performing Approaches ##
+
+***
+
+##### Concatenating metadata features with GRU results #####
+
+One of the attempted approaches that had low performance was one where the result from the GRU layer were concatenated with the metadata features and
+sent through multiple fully connected layers. We tried tuning the hyperparameters and changing the number of layers in the model but were not able
+to improve the accuracy significantly. If we had more time, we could have created more features from metadata to try to improve the performance of this approach.
+
+Accuracy: ~45%
+
+***	
+
+##### Custom Word2Vec architecture #####
+
+A Word2vec model was trained using the text from the bodies of the posts. The word embeddings from this model were used to train a recurrent neural network. We
+suspect that this model had low performance because there was a relatively small set of data used to build the Word2vec dictionary. We could improve this by either 
+training the model with more posts or using a pre-trained dictionary that contains more words.
+
+Accuracy: ~35%

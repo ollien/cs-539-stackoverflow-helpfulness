@@ -16,19 +16,13 @@ url = "/overview/"
 weight = 2
 
 [[menu.nav]]
-name = "Github"
-pre = "github"
-url = "/github/"
+name = "Methods and Results"
+pre = "trending-up"
+url = "/approaches/"
 weight = 3
 
 [[menu.nav]]
-name = "Approaches"
-pre = "approaches"
-url = "/approaches/"
+name = "Github"
+pre = "github"
+url = "/github/"
 weight = 4
-
-[[menu.nav]]
-name = "Rejected Models"
-pre = "approaches"
-url = "/rejected/"
-weight = 5
