@@ -51,7 +51,7 @@ The following scikit models were tested:
 - DecisionTreeClassifier, Accuracy: ~80.4%
 - SVC, Accuracy: ~76.7%
 
-What makes a good question? 
+With that said, it's worth asking: what makes a good question? 
 	
 With the models we ran, the most useful metadata was numerical values we collected or calculated – particularly asker reputation, number of views, 
 text-code ratio, number of text characters, number of code characters, and the number of years the asker had their account on Stack Overflow. While each of 
