@@ -37,7 +37,7 @@ more data from the question if necessary.
 ##### Proposed Approach ###
 
 The team planned to use some form of a neural network for the core predictive algorithm. It was necessary to vectorize the body of the post prior
-to feeding it into the neural network. Existing frameworks for word vectorization include [Word2Vec](https://www.tensorflow.org/tutorials/text/word2vec)
+to feeding it into the neural network. Existing frameworks for word vectorization include [Word2vec](https://www.tensorflow.org/tutorials/text/word2vec)
 and [GloVe](https://nlp.stanford.edu/projects/glove/). Another option was using additional features extracted from the questions to train other types
 of classifiers, such as random forests, and combining these classifiers using an ensemble method.
 

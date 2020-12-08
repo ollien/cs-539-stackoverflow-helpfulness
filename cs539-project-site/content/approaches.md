@@ -13,15 +13,14 @@ title: "Methods and Results"
 The initial dataset from Kaggle had the question Id, title of the question, body of the question, tags, date the question was created, and the quality 
 classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata, 
 such as asker reputation, number of views and the date the asker made their account on Stack Overflow. After cleaning the question body, we created some
-other metadata, such as Text-Code Ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account 
+other metadata, such as text-code ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account 
 on Stack Overflow when they asked the question. 
 
 ***
 
 ##### Post Body Cleaning #####
 
-Prior to vectorizing the bodies of the posts, the text was cleaned. HTML tags and code were removed. In addition, line breaks and punctuation were removed, 
-and all the text was converted to lowercase so that the same word with different cases would not be interpreted to be a different word 
+Prior to vectorizing the bodies of the posts, the text was cleaned. HTML tags, code, line breaks and punctuation were removed, In addition, all the text was converted to lowercase so that the same word with different cases would not be interpreted to be a different word 
 (for example, “Python” versus “python”).
 
 ****
@@ -60,7 +59,7 @@ years the asker had their account, followed by a less significant but still rele
 quality classification. The number of views shows a significant difference between a high quality question and either bad quality classification. In addition, 
 even between edit and close, close has a slightly lower average number of views. Asker reputation and "asker question year" show some trends, but with less 
 linearity. What we can see is that the high quality questions were made by askers that had very high reputation on Stack Overflow and had their account for 
-longer. We can see from the data below that the calculations of Text-Code Ratio has less obvious trends and relationships to quality, though they did help 
+longer. We can see from the data below that the calculations of text-code ratio has less obvious trends and relationships to quality, though they did help 
 improve the accuracy of our models by small percentages.
 
 |                     | High Quality | Bad Quality - Edit | Bad Quality - Close |
@@ -108,7 +107,7 @@ Accuracy: ~45%
 
 ***	
 
-##### Custom Word2Vec architecture #####
+##### Custom Word2vec architecture #####
 
 A Word2vec model was trained using the text from the bodies of the posts. The word embeddings from this model were used to train a recurrent neural network. We
 suspect that this model had low performance because there was a relatively small set of data used to build the Word2vec dictionary. We could improve this by either 
