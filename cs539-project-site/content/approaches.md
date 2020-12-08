@@ -11,7 +11,7 @@ title: "Methods and Results"
 ##### Data Scraping #####
 
 The initial dataset from Kaggle had the question Id, title of the question, body of the question, tags, date the question was created, and the quality 
-classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata, 
+classification of the question (label). After formatting the original to feed question Ids, we used the Stack Exchange API to scrape other metadata, 
 such as asker reputation, number of views and the date the asker made their account on Stack Overflow. After cleaning the question body, we created some
 other metadata, such as text-code ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account 
 on Stack Overflow when they asked the question. 
