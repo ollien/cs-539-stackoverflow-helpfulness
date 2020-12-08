@@ -40,3 +40,7 @@ The team planned to use some form of a neural network for the core predictive al
 to feeding it into the neural network. Existing frameworks for word vectorization include [Word2Vec](https://www.tensorflow.org/tutorials/text/word2vec)
 and [GloVe](https://nlp.stanford.edu/projects/glove/). Another option was using additional features extracted from the questions to train other types
 of classifiers, such as random forests, and combining these classifiers using an ensemble method.
+
+#### Final Approach
+
+After much experimentation, our final approach used a stacking ensemble of an RNN to read post bodies, and a combination of KNN, logistic regression, decision trees, and SVMs to read metadata. With this, we were able to produce a model that has an accuracy of about 89%.

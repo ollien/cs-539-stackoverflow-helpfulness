@@ -153,6 +153,8 @@ more data from the question if necessary.</p>
 to feeding it into the neural network. Existing frameworks for word vectorization include <a href="https://www.tensorflow.org/tutorials/text/word2vec">Word2Vec</a>
 and <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a>. Another option was using additional features extracted from the questions to train other types
 of classifiers, such as random forests, and combining these classifiers using an ensemble method.</p>
+<h4 id="final-approach">Final Approach</h4>
+<p>After much experimentation, our final approach used a stacking ensemble of an RNN to read post bodies, and a combination of KNN, logistic regression, decision trees, and SVMs to read metadata. With this, we were able to produce a model that has an accuracy of about 89%.</p>
 
 
 

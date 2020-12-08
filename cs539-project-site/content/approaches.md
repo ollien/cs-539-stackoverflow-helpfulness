@@ -86,7 +86,7 @@ Accuracy: ~76%
 
 ##### Stacking Ensemble #####
 
-For this approach, we trained all of the above models for Naive Bayes, RNN, and the metadata classifiers in same manner as before.
+For this approach, we trained both the RNN and the metadata classifiers with a 5-fold cross validation.
 The results of all of these classifiers were combined as input to a stacking layer to use for its own classification, (treating the results of each of the previous models as a feature for each post).
 The stacking layer originally used logistic regression, but using an SVC, (Support Vector Classifier) instead was found to give higher accuracy.
 
