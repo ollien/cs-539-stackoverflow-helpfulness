@@ -32,7 +32,7 @@ with a quality, which can be one of the following:
 The labels in this data set are balanced. In addition, since the data set contains the ID of the question, it is possible to go back and scrape
 more data from the question if necessary.
 
-If you would like to explore the data (with our augmentations mentioned in the approaches section), you can view it on [DoltHub](https://www.dolthub.com/repositories/ollien/cs-539-stackoverflow-data)
+If you would like to explore the data (with our augmentations mentioned in the approaches section), you can view it on [DoltHub](https://www.dolthub.com/repositories/ollien/cs-539-stackoverflow-data).
 
 ***
 
