@@ -8,7 +8,7 @@ title: "Project Overview"
 
 StackOverflow is a website where users can post computer programming related questions. It is important that questions have high quality
 so that they will be helpful to both the user who posted the question and users with similar problems. While StackOverflow does check questions
-for similarity to already existing questions, it does not have a tool to automatically assess question quality. There is a Triage system in place, 
+for similarity to already existing questions, it does not have a tool to automatically assess question quality. There is a Triage system in place,
 in which users can mark questions as low quality for further moderator review. However, this system relies on manual intervention and is prone to
 bias, as different moderators may have different criteria regarding what makes a question of high quality.
 
@@ -17,11 +17,11 @@ efficient than the existing Triage system because it would not require manual in
 be only one metric for evaluating question quality rather than several moderators. This tool would give users feedback on their question before it is
 posted so they can make sure that it is of high enough quality to be useful to others.
 
-***	
+***
 
 ##### Data Set #####
 
-This project used a [data set](https://www.kaggle.com/imoore/60k-stack-overflow-questions-with-quality-rate) from Kaggle that consists of 60,000 
+This project used a [data set](https://www.kaggle.com/imoore/60k-stack-overflow-questions-with-quality-rate) from Kaggle that consists of 60,000
 StackOverflow questions from 2016-2020. The data set contains the question ID, title, body, related tags, and post date. Each question is labelled
 with a quality, which can be one of the following:
 
@@ -29,8 +29,10 @@ with a quality, which can be one of the following:
 2. LQ_EDIT: Low-quality posts with a negative score and with multiple community edits. However, they still remain open after the edits.
 3. LQ_CLOSE: Low-quality posts that were closed by the community without a single edit.
 
-The labels in this data set are balanced. In addition, since the data set contains the ID of the question, it is possible to go back and scrape 
+The labels in this data set are balanced. In addition, since the data set contains the ID of the question, it is possible to go back and scrape
 more data from the question if necessary.
+
+If you would like to explore the data (with our augmentations mentioned in the approaches section), you can view it on [DoltHub](https://www.dolthub.com/repositories/ollien/cs-539-stackoverflow-data)
 
 ***
 
