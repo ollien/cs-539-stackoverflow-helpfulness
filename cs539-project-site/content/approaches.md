@@ -10,7 +10,7 @@ title: "Methods and Results"
 
 ##### Data Scraping #####
 
-The initial dataset from Kaggle had the Question Id, title of the question, body of the question, tags, date the question was created, and the quality 
+The initial dataset from Kaggle had the question Id, title of the question, body of the question, tags, date the question was created, and the quality 
 classification of the question (label). After formatting the original to feed question Id’s, we used the Stack Exchange API to scrape other metadata, 
 such as asker reputation, number of views and the date the asker made their account on Stack Overflow. After cleaning the question body, we created some
 other metadata, such as Text-Code Ratio, total characters of text and total characters of code in each post and the number of years the asker has had their account 
@@ -58,7 +58,7 @@ text-code ratio, number of text characters, number of code characters, and the n
 these pieces of metadata contributed to improving the accuracy of the models, the two that showed the most significant trend are number of views and number of 
 years the asker had their account, followed by a less significant but still relevant asker reputation. The data below shows the averages of the metadata for each
 quality classification. The number of views shows a significant difference between a high quality question and either bad quality classification. In addition, 
-even between edit and close, close has a slightly lower average number of views. Asker reputation and Asker question year show some trends, but with less 
+even between edit and close, close has a slightly lower average number of views. Asker reputation and "asker question year" show some trends, but with less 
 linearity. What we can see is that the high quality questions were made by askers that had very high reputation on Stack Overflow and had their account for 
 longer. We can see from the data below that the calculations of Text-Code Ratio has less obvious trends and relationships to quality, though they did help 
 improve the accuracy of our models by small percentages.
